@@ -27,7 +27,9 @@ module.exports = (sequelize, DataTypes) => {
     teamIntroduction: DataTypes.TEXT,
     startupExperience: DataTypes.TEXT,
     achievement: DataTypes.TEXT,
-    status: DataTypes.INTEGER
+    status: DataTypes.INTEGER,
+    targetMarket: DataTypes.TEXT,
+    coFounders: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'GarageApplications'
