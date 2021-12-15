@@ -16,7 +16,7 @@ module.exports = async (ctx) => {
       userId: me.id
     })
   } catch (error) {
-
+    ctx.throw(errorMessageMap.APPLICATION.FETCH_APPLICATION_FAILURE)
   }
 
   responseHandler.success(ctx, 200, data)

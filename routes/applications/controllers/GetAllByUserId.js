@@ -6,19 +6,17 @@ const { Application } = require('@services')
 const ApplicationService = new Application()
 
 module.exports = async (ctx) => {
-  const id = ctx.params.id
-  const wantedData = ctx.request.body
+  const me = ctx.state.me
+  const preview = ctx.request.query.preview
 
   let data
   try {
-    data = await ApplicationService.PatchById({
-      id,
-      userId: ctx.state.me.id,
-      updateData: wantedData
+    data = await ApplicationService.GetAllByUserId({
+      userId: me.id,
+      preview
     })
   } catch (error) {
-    ctx.throw(errorMessageMap.APPLICATION.UPDATE_APPLICATION_FAILURE)
-    return
+    ctx.throw(errorMessageMap.APPLICATION.FETCH_APPLICATION_FAILURE)
   }
 
   responseHandler.success(ctx, 200, data)

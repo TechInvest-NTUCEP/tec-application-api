@@ -9,20 +9,30 @@ class ApplicationService {
       })
       data = await newAppInstance.save()
     } catch (error) {
-      console.log(error)
       throw new Error('CREATE_APPLICATION_FAILURE')
     }
 
     return data
   }
 
-  async GetByUserId ({ userId }) {
+  async GetAllByUserId ({ userId, preview = false }) {
+    let selectedFields
+    if (preview) {
+      selectedFields = {
+        attributes: ['name', 'id', 'createdAt']
+      }
+    }
+
     let data
     try {
       data = await models.GarageApplications.findAll({
         where: {
           userId
-        }
+        },
+        ...selectedFields,
+        order: [
+          ['createdAt', 'DESC']
+        ]
       })
     } catch (error) {
       throw new Error('FETCH_APPLICATION_FAILED')
@@ -59,10 +69,10 @@ class ApplicationService {
     return data
   }
 
-  async PatchById ({ id, userId, fields = [] }) {
+  async PatchById ({ id, userId, updateData }) {
     let application
     try {
-      application = await this.GetById({ id })
+      application = await this.GetById({ id, userId })
     } catch (error) {
       throw new Error('FETCH_APPLICATION_FAILED')
     }
@@ -74,16 +84,24 @@ class ApplicationService {
     let data
     try {
       data = await models.GarageApplications.update({
-        ...fields
+        updatedAt: new Date().toISOString(),
+        ...updateData
       }, {
         where: {
           userId,
           id
-        }
+        },
+        returning: true,
+        plain: true
       })
     } catch (error) {
       throw new Error('UPDATE_APPLICATION_FAILED')
     }
+
+    if (data[0] === 0) {
+      throw new Error('UPDATE_APPLICATION_FAILED')
+    }
+
     return data
   }
 }
