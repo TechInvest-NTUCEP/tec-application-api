@@ -50,5 +50,5 @@ jobs:
         with:
           app-name: 'tec-api'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_252B160783AD4375B28D3D5C12E82244 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_35866186EB3449C0B1E5D7D38B0A54DB }}
           package: .
