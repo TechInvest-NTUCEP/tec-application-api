@@ -10,7 +10,6 @@ class AuthService {
         }
       })
     } catch (error) {
-      console.error(error)
       throw new Error('FETCH_USER_FAILED')
     }
     return data
@@ -30,16 +29,10 @@ class AuthService {
     return data
   }
 
-  async Signup ({ name, email, password }) {
-    const newUser = {
-      name,
-      email,
-      password
-    }
-
+  async Create ({ newUserData }) {
     let data
     try {
-      const newUserInstance = new models.Users(newUser)
+      const newUserInstance = new models.Users(newUserData)
       data = await newUserInstance.save()
     } catch (error) {
       throw new Error('CREATE_USER_FAILED')

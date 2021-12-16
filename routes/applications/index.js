@@ -11,4 +11,6 @@ router.get('/:id', controllers.GetById)
 router.post('/create', controllers.create)
 router.patch('/:id', controllers.PatchById)
 
+router.post('/:id/share-token', controllers.GetShareToken)
+
 module.exports = router
