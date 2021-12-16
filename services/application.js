@@ -1,5 +1,7 @@
+const config = require('config')
+const jwt = require('jsonwebtoken')
+
 const models = require('@models')
-const helpers = require('@helpers')
 
 class ApplicationService {
   async Create ({ userId }) {
@@ -57,14 +59,16 @@ class ApplicationService {
   }
 
   async GetByToken ({ token }) {
+    const secret = config.get('secret.shareToken')
+
     let tokenData
     try {
-      tokenData = await helpers.token.verify(token)
+      tokenData = await jwt.verify(token, secret)
     } catch (error) {
       throw new Error('TOKEN_VALIDATION_FAILED')
     }
 
-    if (tokenData.data.id.type !== 'readApplication') {
+    if (tokenData.data.type !== 'readApplication') {
       throw new Error('TOKEN_VALIDATION_FAILED')
     }
 
@@ -72,7 +76,7 @@ class ApplicationService {
     try {
       data = await models.GarageApplications.findOne({
         where: {
-          id: tokenData.data.id.id
+          id: tokenData.data.id
         },
         attributes: {
           exclude: ['userId', 'createdAt', 'updatedAt', 'status', 'id']
@@ -137,10 +141,13 @@ class ApplicationService {
       throw new Error('GET_APPLICATION_TOKEN_FAILED_NOT_BELONGS_TO_THIS_USER')
     }
 
-    const accesstoken = await helpers.token.issue({
-      type: 'readApplication',
-      id: application.id
-    })
+    const secret = config.get('secret.shareToken')
+    const accesstoken = await jwt.sign({
+      data: {
+        type: 'readApplication',
+        id: application.id
+      }
+    }, secret, { expiresIn: '7d' })
 
     return accesstoken
   }
